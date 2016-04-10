@@ -198,7 +198,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imagePickerView.image = nil
         pickLabel.hidden = false
         shareButton.enabled = false
-    
+        cancelButton.enabled = false
     }
     
     
