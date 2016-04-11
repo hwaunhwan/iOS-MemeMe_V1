@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MemeEditorViewController.swift
 //  MemeMe
 //
 //  Created by Simon Kim on 4/8/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var imagePickerView: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
@@ -51,23 +51,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     /* Picking an image from the Album or Camera */
     
     
-    // Use an image from album
     @IBAction func pickAnImageFromAlbum(sender: AnyObject) {
         
+        pickImage(.PhotoLibrary)
+    }
+    
+    @IBAction func pickAnImageFromCamera(sender: AnyObject) {
+        pickImage(.Camera)
+    }
+    
+    // Codes for selecting an image with source type (.PhotoLibrary, .Camera, etc)
+    func pickImage(sourceType: UIImagePickerControllerSourceType) {
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
-        pickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        pickerController.sourceType = sourceType
         presentViewController(pickerController, animated: true, completion: nil)
     }
     
-    // Use an image from camera
-    @IBAction func pickAnImageFromCamera(sender: AnyObject) {
-        let pickerController = UIImagePickerController()
-        pickerController.delegate = self
-        pickerController.sourceType = UIImagePickerControllerSourceType.Camera
-        presentViewController(pickerController, animated: true, completion: nil)
-        
-    }
     
     // Assigning selected image to image view
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -124,8 +124,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // Subscribe to observe keyboard notification
     func subscribeToKeyboardNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     // Unsubscribe to observe keyboard notification
@@ -134,16 +134,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
-    // Responses to the UIKeyboardWillShowNotification
+    // Responses to the UIKeyboardWillShowNotification. From Udacity Forum.
     func keyboardWillShow(notification: NSNotification) {
-        if bottomTextField.isFirstResponder() {
-            view.frame.origin.y -= getKeyboardHeight(notification)
+        if bottomTextField.isFirstResponder(){
+            self.view.frame.origin.y -= getKeyboardHeight(notification);
+        }
+        else if topTextField.isFirstResponder(){
+            self.view.frame.origin.y = 0;
         }
     }
     
     func keyboardWillHide(notification: NSNotification) {
         if bottomTextField.isFirstResponder() {
-            view.frame.origin.y += getKeyboardHeight(notification)
+            self.view.frame.origin.y = 0
         }
     }
     
